@@ -131,7 +131,7 @@ Regardless of the output name, one file is generated for each active Mode - the 
 
 The only external library required is `jinja2` (at least 3.1.2, included in the `requirements.txt` file).
 
-`memlmake` generates $\text{\LaTeX}$ code, and then calls the standard `pdflatex` compiler, directing it to generate an output file as defined 
+`memlmake` generates LaTeX code, and then calls the standard `pdflatex` compiler, directing it to generate an output file as defined 
 
 
 ### MeML-rewriting
