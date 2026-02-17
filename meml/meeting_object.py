@@ -84,7 +84,6 @@ class Meeting:
         prev_cmd = None
         for line in lines:
             cmd = line.getPreambleCommand(handlers.keys())
-
             if cmd:
                 met[cmd].absorb(line)
                 prev_cmd = cmd
@@ -93,7 +92,8 @@ class Meeting:
                     met[prev_cmd].absorb(line)
 
         for cmd in met.keys():
-            handlers[cmd](met[cmd])
+            if not met[cmd].Blank:
+                handlers[cmd](met[cmd])
             # handlers[cmd](met[cmd])
 
     def _title(self,value):
@@ -112,7 +112,6 @@ class Meeting:
             key = match.group(1)
             declare= match.group(2) # This will be None if no () found
             reason = match.group(3) # This will be None if no [] found
-            
             keys.append(key)
             decs.append(declare.strip() if declare else None)
             reasons.append(reason.strip() if reason else None)

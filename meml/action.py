@@ -1,6 +1,6 @@
 import re
 import hashlib
-ACTION_RE = re.compile(r"^\s*(@[\w/@]*(?:\s*/\s*@[\w/@]*)*)\s+(.*)$")
+ACTION_RE = re.compile(r"^\s*((?:@\w+\s*/\s*)*@\w+)\s+(.*)$")
 ADJECTIVES = [
     'Amiable', 'Bouncy', 'Breezy', 'Bright', 'Clever', 
     'Crisp', 'Dandy', 'Dapper', 'Eager', 'Easy', 'Fizzy', 'Fluffy', 'Fresh', 
@@ -23,13 +23,13 @@ ANIMALS = [
 ]
 class ActionSet:
     def __init__(self,committee,actions):
+        
         team_tasks = {}      
         individual_tasks = {}
         # person_to_teams = {} # Person object -> set of "Team Names"
         for topic, block in actions:
 
             for line in block.Elements:
-                
                 match = ACTION_RE.search(line.Text)
                 if match:
                     kl = [r.strip() for r in match.group(1).split("/")]
@@ -52,7 +52,6 @@ class ActionSet:
         
         self.Team = team_tasks
         self.Individual = individual_tasks
-
     def Texify(self):
         s = ""
         #do teams first

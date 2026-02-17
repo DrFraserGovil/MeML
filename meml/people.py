@@ -1,4 +1,5 @@
 import re
+import meml.util
 PEOPLE_RE = re.compile(r'(@\w+)\s*\(([^/)]+)(?:/([^)]+))?\)')
 class Committee:
     def __init__(self):
@@ -6,6 +7,7 @@ class Committee:
 
 
     def AddPeople(self,line,activator):
+        # print(activator,line)
         matches = PEOPLE_RE.findall(line)
         if not matches:
             print(f"Warning: {activator} line found but no valid people parsed")
@@ -13,10 +15,14 @@ class Committee:
 
         for key,full,nick in matches:
             p = Person(key,full,nick,activator.lower()=="attend",activator.lower()!="mentioned")
-            self.Members.append(p)
+            self.AddMember(p)
 
     
-
+    def AddMember(self,person):
+        for r in self.Members:
+            if r.Key == person.Key:
+                meml.util.FatalError(f"Two people share a key: {person.FullName} and {r.FullName}. Please ensure keys are unique.")
+        self.Members.append(person)
     def MatchSet(self,keys):
         matching = []
         
@@ -32,23 +38,26 @@ class Committee:
         clearname = key.replace("@","")
         tmp = Person(key,clearname)
         tmp.SetExtra()
-        self.Members.append(tmp)
+        self.AddMember(tmp)
         return self.Members[-1]
     
     def FlagSick(self,keys,declarations,reasons):
         for i,key in enumerate(keys):
+            found = False
             for person in self.Members:
                 if person.Key == key:
                     person.SetSick(reasons[i])
-                    continue
-            searcher = key
-            if reasons[i]:
-                searcher += f"({declarations[i]})"
-            matches = PEOPLE_RE.findall(searcher)
-            for key,full,nick in matches:
-                p = Person(key,full,nick,True)
-                p.SetSick(reasons[i])
-                self.Members.append(p)
+                    found = True
+                    break
+            if not found:
+                searcher = key
+                if reasons[i]:
+                    searcher += f"({declarations[i]})"
+                matches = PEOPLE_RE.findall(searcher)
+                for key,full,nick in matches:
+                    p = Person(key,full,nick,True)
+                    p.SetSick(reasons[i])
+                    self.AddMember(p)
     
     def ResolveNames(self,text):
         def replace_match(match):
