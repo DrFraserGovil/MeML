@@ -95,5 +95,53 @@ If only one person is assigned a task, then a dedicated section (using their ful
 
 If an individual has both individual tasks, and team tasks, then an additional note is inserted into their section, informing them which teams they are members of.
 
-## VS Code Integration
+## The MeML Compiler
+
+We provide a compiler for MeML: ```memlmake```.
+
+To run the compiler, ensure that it is on $PATH. The syntax is:
+
+```
+memlmake [filename] [-cmna] [--all] [-h] [-o [destination]]
+```
+
+| Option 	| Alias     	| Function                                 	|
+|--------	|-----------	|------------------------------------------	|
+| -h        |  --help       | Opens the help menu                       |
+| -a     	| --agenda  	| Activates *Agenda Mode*                  	|
+| -c     	| --chair   	| Activates *Chair Mode*                   	|
+| -m     	| --minutes 	| Activates *Minutes Mode*                 	|
+| -n     	| --notes   	| Alias for -m                             	|
+| --all  	|           	| Activates all 3 modes                    	|
+| -o     	| --output   	| Defines the output directory or filename 	|
+
+### Output
+
+The output of the compiler is a number PDF documents. The name and location of the files depends on the modes activated, and the value passed to `-o`:
+
+1. **If `-o` is omitted:** The output file(s) will be created in the same directory, and have the same name as the input file - but with the file extension replaced by `.pdf`.
+2. **If `-o` points to a directory:** The directory will be created if it does not already, and an output file (with the same name as the input file, but a `.pdf` extension) will be written there.
+3. **If `-o` is a full file path** If the parent directory does not exist, then it is created. The output file is then saved exactly with the provided name.
+
+Regardless of the output name, one file is generated for each active Mode - the filename is appended by either `_agenda`, `_chair` or `_minutes` as appropriate.
+
+### Compatibility
+
+`memlmake` is a python script, developed on Python 3.12, and has not been tested on other versions. It requires at least Python 3.8 to run.
+
+The only external library required is `jinja2` (at least 3.1.2, included in the `requirements.txt` file).
+
+`memlmake` generates $\text{\LaTeX}$ code, and then calls the standard `pdflatex` compiler, directing it to generate an output file as defined 
+
+
+### MeML-rewriting
+
+When called, the MeML compiler also re-writes the source document. This enables it to resolve date commands (such as @TODAY) to `lock in' the date - and ensures that the meeting date then doesn't move with each compilation. It also standardises the layout and format.
+
+
+## VSCode Integration
+
+We also provide a VSCode plugin, in the `meml-extension` directory. This can be manually installed by typing `Ctrl+Shift+P`, then navigating to `Developer: Install Extension From Location`, and installing `meml-extension`.
+
+The extension provides syntax highlighting for the various marker lines, and a `Smart Enter' feature which automatially inserts the previous marker to enable quick note-taking (type enter again to clear the line).
 

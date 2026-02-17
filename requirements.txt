@@ -1,0 +1,2 @@
+# MeML - Meeting Markup Language Dependencies
+Jinja2>=3.1.2

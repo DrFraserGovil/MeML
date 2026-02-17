@@ -3,8 +3,8 @@ import re
 import sys
 import argparse
 def FatalError(msg=None):
-    print("FATAL ERROR ENCOUNTERED")
     if msg: print(msg)
+    print("FATAL MEML ERROR ENCOUNTERED")
     print("No output generated")
     exit(1)
 
@@ -21,15 +21,14 @@ def parseArgs():
     parser = argparse.ArgumentParser(description="MeML Compiler")
     
     # Required positional argument
-    parser.add_argument("filepath", help="Path to the .mtg file")
+    parser.add_argument("filepath", help="Path to the input MeML file")
     
     # Optional modes (allows: --agenda --notes etc.)
-    parser.add_argument("-a", "--agenda",  dest="modes", action="append_const", const="agenda")
-    parser.add_argument("-c", "--chair",   dest="modes", action="append_const", const="chair")
-    parser.add_argument("-n", "--notes",   dest="modes", action="append_const", const="notes")
-    parser.add_argument("-m", "--minutes", dest="modes", action="append_const", const="notes")
-    parser.add_argument("--all",           dest="all_modes", action="store_true")
-    parser.add_argument("-o","--output",dest="output",default=None)
+    parser.add_argument("-a", "--agenda",  dest="modes", action="append_const", const="agenda",help="Activates agenda mode")
+    parser.add_argument("-c", "--chair",   dest="modes", action="append_const", const="chair",help="Activates chair mode")
+    parser.add_argument("-n", "--notes", "-m","--minutes",   dest="modes", action="append_const", const="notes",help="Activates minutes mode")
+    parser.add_argument("--all",           dest="all_modes", action="store_true",help="Activates agenda, chair and minutes mode")
+    parser.add_argument("-o",dest="output",default=None,help="The output filename or directory",metavar="[destination]")
     args = parser.parse_args()
     # Logic to consolidate modes
     valid_modes = {"agenda", "chair", "notes"}
