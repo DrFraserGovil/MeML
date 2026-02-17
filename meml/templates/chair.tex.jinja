@@ -1,0 +1,34 @@
+\BLOCK{ extends "base.tex.jinja" }
+\BLOCK{block includes}\usepackage{amssymb}
+
+\usepackage[most]{tcolorbox}
+    \newtcolorbox{chairnote}{
+    colback=gray!5!white,    % Light gray background
+    colframe=black!75!white, % Dark gray border
+    width=\textwidth,        % Full width
+    sharp corners,           % Professional, clean look
+    boxrule=2pt,           % Thin border
+    left=3pt, right=3pt,     % Internal padding
+    breakable,               % Allows the box to split across pages
+    enhanced,                % Required for breakable
+    fonttitle=\bfseries,
+    title={Chair Notes},
+}
+
+\BLOCK{endblock}
+\BLOCK{block person}$\Box$~#1\BLOCK{endblock}
+
+\BLOCK{block titletext}:~Chair's Agenda
+\BLOCK{endblock}
+
+\BLOCK{ block section_logic scoped }
+    %% if "agenda" in topic.Sections
+        {\VAR{topic.Sections["agenda"].GetText("tex")} }
+    %% endif
+
+    %% if "chair" in topic.Sections
+        \begin{chairnote}
+            \VAR{topic.Sections["chair"].GetText("tex")}
+        \end{chairnote}
+    %% endif
+\BLOCK{ endblock }

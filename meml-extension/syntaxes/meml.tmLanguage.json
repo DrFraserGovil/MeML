@@ -1,0 +1,27 @@
+{
+  "scopeName": "text.meml",
+  "patterns": [
+    { "include": "#headers" },
+    { "include": "#markers" }
+  ],
+  "repository": {
+  "headers": {
+  "name": "markup.heading.meml",
+  "match": "^\\s*([=\\-\\+\\*#]{2,})\\s*(.+?)\\s*\\1\\s*$",
+  "captures": {
+    "1": { "name": "punctuation.definition.heading.meml" },
+    "2": { "name": "variable.other.section.meml" }
+  }
+},
+    "markers": {
+      "patterns": [
+        { "name": "keyword.control.decision.meml", "match": "^\\s*>\\s*.*$" },
+        { "name": "entity.name.namespace.question.meml", "match": "^\\s*\\?\\s*.*$" },
+        { "name": "string.regexp.action.meml", "match": "^\\s*!\\s*.*$" },
+        { "name": "markup.bold.summary.meml", "match": "^\\s*\\$\\s*.*$" },
+        { "name": "entity.name.function.append.meml", "match": "^\\s*\\+\\s*.*$" },
+        { "name": "comment.section.meml", "match": "^\\s*\\#\\s*.*$" }
+      ]
+    }
+  }
+}

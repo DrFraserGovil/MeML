@@ -1,0 +1,43 @@
+{
+  "comments": { "lineComment": "%" },
+  "onEnterRules": [
+    {
+      // EXIT RULE: Only matches if the line is JUST the marker + optional spaces
+      "beforeText": "^\\s*[*!>+#$?][\\s]*$",
+      "action": { 
+        "indentAction": "none", 
+        "removeText": 3,
+        "indent": "none" 
+      }
+    },
+    { 
+      // CONTINUATION RULES: Only matches if there is actual TEXT after the marker
+      "beforeText": "^\\s*\\*\\s*\\S.*", 
+      "action": { "indentAction": "none", "appendText": "* ", "indent": "none" } 
+    },
+    { 
+      "beforeText": "^\\s*!\\s*\\S.*", 
+      "action": { "indentAction": "none", "appendText": "! ", "indent": "none" } 
+    },
+    { 
+      "beforeText": "^\\s*>\\s*\\S.*", 
+      "action": { "indentAction": "none", "appendText": "> ", "indent": "none" } 
+    },
+    { 
+      "beforeText": "^\\s*\\+\\s*\\S.*", 
+      "action": { "indentAction": "none", "appendText": "+ ", "indent": "none" } 
+    },
+    { 
+      "beforeText": "^\\s*#\\s*\\S.*", 
+      "action": { "indentAction": "none", "appendText": "# ", "indent": "none" } 
+    },
+    { 
+      "beforeText": "^\\s*\\$\\s*\\S.*", 
+      "action": { "indentAction": "none", "appendText": "$ ", "indent": "none" } 
+    },
+    { 
+      "beforeText": "^\\s*\\?\\s*\\S.*", 
+      "action": { "indentAction": "none", "appendText": "? ", "indent": "none" } 
+    }
+  ]
+}

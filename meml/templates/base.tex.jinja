@@ -1,0 +1,92 @@
+\documentclass[10pt]{article}
+\BLOCK{block includes}\BLOCK{endblock}
+\usepackage{changepage}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{enumitem}
+\def\headerPost{\BLOCK{block titletext}\BLOCK{endblock}}
+\title{\VAR{meeting.Title}}
+\date{}
+%% if date
+\date{\VAR{date}}
+%% endif
+
+\setlength\parskip{5pt}
+\setlength\parindent{0pt}
+\setlist[itemize]{leftmargin=2.5ex}
+\makeatletter
+\renewcommand{\@maketitle}{
+  \newpage
+  \null
+  \begin{center}
+    {\LARGE \bfseries \@title\headerPost{}\par} % Title second
+    \vskip 1.5em
+        {\large \@date \par} % Date first
+  \end{center}
+  \par
+  \vskip 1.5em
+  \BLOCK{block attendance}
+  %%if invite
+  \textbf{Invited: } \VAR{invite}
+  %%endif
+  \BLOCK{endblock}
+}
+\makeatother
+
+\newcommand\action[1]
+{
+    \par\textbf{Action assigned}: #1
+}
+\newcommand\decision[1]
+{
+    \par\textbf{Decision made}: #1
+}
+\newcommand\question[1]
+{
+    \par\textbf{Question asked}: #1
+}
+\newcommand\summary[1]
+{
+    \par \begin{adjustwidth}{0.1in}{0pt}{\bfseries \slshape #1}\end{adjustwidth}
+}
+\BLOCK{ macro get_heading(level, title) -}
+    \BLOCK{block headings scoped}
+    \BLOCK{ set headings = ["\section", "\subsection", "\subsubsection", "\paragraph", "\subparagraph"] -}
+    \BLOCK{ set h = headings[level|int] if level|int < headings|length else "subparagraph" -}
+    \VAR{ h }{\VAR{ title }}
+    \BLOCK{endblock}
+\BLOCK{- endmacro }
+
+\BLOCK{ macro render_section(topic)}
+  %% if "agenda" in topic.Sections
+    \VAR{topic.Sections["agenda"].GetText("tex")}
+%%endif
+\BLOCK{ endmacro}
+\BLOCK{ macro render_topic(topic) -}
+\VAR{ get_heading(topic.Level, topic.Title) }
+\begin{adjustwidth}{0.2in}{0pt}
+        
+
+    \BLOCK{ block section_logic scoped }
+    \VAR{ render_section(topic) }
+    \BLOCK{ endblock }
+
+    \BLOCK{for subtopic in topic.SubTopics}
+        \VAR{render_topic(subtopic)}
+    \BLOCK{ endfor -}
+
+    \end{adjustwidth}
+\BLOCK{ endmacro-}
+
+\newcommand\person[1]{\BLOCK{block person}#1\BLOCK{endblock}}
+\begin{document}
+    \maketitle
+
+    \BLOCK{block main_loop}
+        \BLOCK{ for topic in meeting.Topics}
+        \VAR{ render_topic(topic) }
+        \BLOCK{ endfor -}
+    \BLOCK{endblock}
+
+
+ 
+\end{document}

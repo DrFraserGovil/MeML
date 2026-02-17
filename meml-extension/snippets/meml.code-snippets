@@ -1,0 +1,12 @@
+{
+  "Action Item": {
+    "prefix": "!",
+    "body": "! ${1:Task for} @${2:person} [${3:deadline}]",
+    "description": "Create a new action item"
+  },
+  "Attendee": {
+    "prefix": "@",
+    "body": "@${1:KEY}(${2:Full Name}) [${3:Reason}]",
+    "description": "Add an attendee with optional metadata"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "meml-extension",
+  "displayName": "MeML Meeting DSL",
+  "publisher": "jfg",
+  "version": "0.1.1",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:meml"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -w -p ."
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "meml",
+        "aliases": [
+          "MeML",
+          "meml"
+        ],
+        "extensions": [
+          ".meml",".mtg"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "meml",
+        "scopeName": "text.meml",
+        "path": "./syntaxes/meml.tmLanguage.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "meml.smartEnter",
+        "key": "enter",
+        "when": "editorTextFocus && editorLangId == 'meml'"
+      }
+    ],
+    "commands": [
+      {
+        "command": "meml.smartEnter",
+        "title": "MTG: Smart Enter"
+      }
+    ]
+  },
+  "dependencies": {
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+  "typescript": "^5.0.0",
+  "@types/vscode": "^1.70.0"
+}
+  
+}

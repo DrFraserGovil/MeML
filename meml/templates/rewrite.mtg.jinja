@@ -1,0 +1,30 @@
+Title:  \VAR{meeting.Title}
+Date:   \VAR{meeting.Date.Rewrite()}
+%% if attending_list
+Attend: \VAR{attending_list}
+%% endif
+%% if extra_list
+Extra:  \VAR{extra_list}
+%% endif
+%% if mention_list
+Mentioned:  \VAR{mention_list}
+%% endif
+%% if absent_list
+Absent: \VAR{absent_list}
+%% endif
+\BLOCK{ macro render_topic(topic) -}
+\VAR{ "\t"*(topic.Level) +topic.Symbol + " " + topic.Title + " " + topic.Symbol }
+\BLOCK{ for sec_name, sec_obj in topic.Sections.items()-}
+\VAR{"\t"*(1+topic.Level) + "# " + sec_name.capitalize()}
+\VAR{ sec_obj.GetText("mtg",topic.Level)-}
+\BLOCK{ endfor -}
+
+\BLOCK{ for subtopic in topic.SubTopics -}
+\VAR{"\n"}
+\VAR{ render_topic(subtopic)-}
+\BLOCK{ endfor -}
+\BLOCK{ endmacro-}
+
+\BLOCK{ for topic in meeting.Topics}
+\VAR{ render_topic(topic) }
+\BLOCK{ endfor -}

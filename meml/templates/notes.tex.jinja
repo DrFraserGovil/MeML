@@ -1,0 +1,156 @@
+\BLOCK{ extends "base.tex.jinja" }
+\BLOCK{block titletext}:~Minutes
+\BLOCK{endblock}
+
+
+\BLOCK{block attendance}
+    \begin{tabularx}{\linewidth}{rX}
+  %%if attend
+  \textbf{Attended: } & \VAR{attend} \\
+  %%endif
+  %%if absent
+  \par\textbf{Absent: }  &\VAR{absent} \\
+  %%endif
+  %%if extra
+  \par\textbf{Extra: } & \VAR{extra} \\
+  %%endif
+  %%if mentioned
+  \par\textbf{Mentioned: } & \VAR{mentioned} \\
+  %%endif
+    \end{tabularx}
+  \BLOCK{endblock}
+
+\BLOCK{block includes}
+\usepackage{tabularx}
+\usepackage[most]{tcolorbox}
+    \newtcolorbox{actionbox}{
+    colback=red!50!white,    % Light gray background
+    colframe=black!75!red, % Dark gray border
+    width=\linewidth,        % Full width
+    rounded corners,           % Professional, clean look
+    boxrule=2pt,           % Thin border
+    left=3pt, right=3pt,     % Internal padding
+    breakable,               % Allows the box to split across pages
+    enhanced,                % Required for breakable
+    fonttitle=\bfseries,
+    title={Actions Assigned},
+}
+\usepackage[most]{tcolorbox}
+    \newtcolorbox{decidebox}{
+    colback=green!50!white,    % Light gray background
+    colframe=black!75!green, % Dark gray border
+    width=\linewidth,        % Full width
+    rounded corners,           % Professional, clean look
+    boxrule=2pt,           % Thin border
+    left=3pt, right=3pt,     % Internal padding
+    breakable,               % Allows the box to split across pages
+    enhanced,                % Required for breakable
+    fonttitle=\bfseries,
+    title={Decisions Made},
+}
+\usepackage[most]{tcolorbox}
+    \newtcolorbox{questionbox}{
+    colback=yellow!50!white,    % Light gray background
+    colframe=black!75!yellow, % Dark gray border
+    width=\linewidth,        % Full width
+    rounded corners,           % Professional, clean look
+    boxrule=2pt,           % Thin border
+    left=3pt, right=3pt,     % Internal padding
+    breakable,               % Allows the box to split across pages
+    enhanced,                % Required for breakable
+    fonttitle=\bfseries,
+    title={Questions Asked},
+}
+
+    \newcommand\team[3]
+    {   
+        \vbox{
+        \subsection*{#1}
+        \if#2\empty\else
+        \vspace{-0.2cm}\textit{\small #2}
+        \fi
+        \vspace{-0.1cm}
+        \begin{enumerate}[leftmargin=15pt]
+            #3
+        \end{enumerate}
+        }
+    }
+    \newcommand\individual[3]
+    {
+        \if\relax\detokenize{#3}\relax\else
+        \vbox{
+            \subsection*{#1}
+            \def\temp{#2}
+             \if\temp\empty\else
+            \vspace{-0.2cm}\textit{\small In Team #2}
+            \fi
+            \def\temp{#3}
+            
+                \begin{enumerate}[leftmargin=15pt]
+                    #3
+                \end{enumerate}
+                }
+                \fi
+    }
+    \newcommand\summaryBlock[2]{
+        % \subsubsection*{#1}
+        \par\textbf{#1}\par
+        \begin{adjustwidth}{0.3in}{0pt}#2\end{adjustwidth}
+    }
+    \usepackage{multicol}
+\BLOCK{endblock}
+
+\BLOCK{ block section_logic scoped }
+    %% if "minutes" in topic.Sections
+        {\VAR{topic.Sections["minutes"].GetText("tex",0)} }
+    %% endif
+\BLOCK{ endblock }
+
+
+\BLOCK{block headings scoped}
+    \BLOCK{ set headings = ["\subsection", "\subsubsection", "\paragraph*", "\subparagraph*"] -}
+    \BLOCK{ set h = headings[level|int] if level|int < headings|length else "subparagraph" -}
+    \VAR{ h }{\VAR{ title }}
+    \BLOCK{endblock}
+
+    
+\BLOCK{block main_loop}
+    \renewcommand{\thesubsection}{\arabic{subsection}}
+     %\section*{Summary}
+        \renewcommand\action[1]{\item #1}
+        \renewcommand\decision[1]{\item #1}
+        \renewcommand\question[1]{\item #1}
+        %% if summary
+            \VAR{summary}
+        %%endif
+        %% if action_list
+        \begin{actionbox}
+            \VAR{action_list}
+        \end{actionbox}
+        %%endif
+        %% if question_list
+        \begin{questionbox}
+            \begin{enumerate}
+                \BLOCK{ for title, action in question_list}
+                \VAR{action.GetText("tex")} [Source: \VAR{title}]
+                \BLOCK{ endfor}
+            \end{enumerate}
+        \end{questionbox}
+        %%endif
+        %% if decide_list
+        \begin{decidebox}
+            \begin{enumerate}
+                \BLOCK{ for title, action in decide_list}
+                \VAR{action.GetText("tex")} [Source: \VAR{title}]
+                \BLOCK{ endfor}
+            \end{enumerate}
+        \end{decidebox}
+        %%endif
+        \renewcommand\action[1]{\par\textbf{Action assigned:}~#1}
+        \renewcommand\decision[1]{\par\textbf{Decision made:}~#1}
+        \renewcommand\question[1]{\par\textbf{Question asked:}~#1}
+    \section*{Minutes}
+        \BLOCK{ for topic in meeting.Topics}
+        \VAR{ render_topic(topic) }
+        \BLOCK{ endfor -}
+\BLOCK{endblock}
