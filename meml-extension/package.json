@@ -23,7 +23,8 @@
           "meml"
         ],
         "extensions": [
-          ".meml",".mtg"
+          ".meml",
+          ".mtg"
         ],
         "configuration": "./language-configuration.json"
       }
@@ -40,21 +41,56 @@
         "command": "meml.smartEnter",
         "key": "enter",
         "when": "editorTextFocus && editorLangId == 'meml'"
-      }
+      },
+      {
+      "command": "meml.selectMode",
+      "key": "ctrl+shift+m",
+      "when": "editorLangId == meml"
+    },
+      {
+      "command": "meml.build",
+      "key": "ctrl+shift+b",
+      "when": "editorLangId == meml"
+    }
     ],
     "commands": [
       {
         "command": "meml.smartEnter",
-        "title": "MTG: Smart Enter"
+        "title": "MeML: Smart Enter"
+      },
+      { "command": "meml.build", "title": "MeML: Build PDF", "icon": "$(play)" },
+    { "command": "meml.setModeAgenda", "title": "Switch to Agenda Mode" },
+    { "command": "meml.setModeChair", "title": "Switch to Chair Mode" },
+    { "command": "meml.setModeMinutes", "title": "Switch to Minutes Mode" }
+    ],
+    "menus": {
+    "editor/title": [
+      {
+        "when": "resourceLangId == meml",
+        "command": "meml.build",
+        "group": "navigation"
       }
+    
     ]
   },
+    "configuration": {
+  "title": "MeML",
+  "properties": {
+    "meml.outputPath": {
+      "type": "string",
+      "default": "compiled_pdfs",
+      "description": "Where to save compiled PDFs. Can be an absolute path or relative to the .meml file."
+    }
+  }
+}
+  },
   "dependencies": {
+    "path": "^0.12.7",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-  "typescript": "^5.0.0",
-  "@types/vscode": "^1.70.0"
-}
-  
+    "@types/node": "^25.2.3",
+    "@types/vscode": "^1.70.0",
+    "typescript": "^5.0.0"
+  }
 }
