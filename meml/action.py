@@ -58,7 +58,7 @@ class ActionSet:
         if "General Actions" in self.Team:
             s += "\\team{General Tasks}{}{"
             for item in self.Team["General Actions"][0]:
-                s += "\n" + item
+                s += "\n\\item" + item
             s += "}"
             self.Team.pop("General Actions")
 

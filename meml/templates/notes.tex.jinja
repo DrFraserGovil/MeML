@@ -22,6 +22,7 @@
 
 \BLOCK{block includes}
 \usepackage{tabularx}
+\usepackage{hyperref}
 \usepackage[most]{tcolorbox}
     \newtcolorbox{actionbox}{
     colback=red!50!white,    % Light gray background
@@ -116,7 +117,7 @@
     
 \BLOCK{block main_loop}
     \renewcommand{\thesubsection}{\arabic{subsection}}
-     %\section*{Summary}
+     \section*{Summary}
         \renewcommand\action[1]{\item #1}
         \renewcommand\decision[1]{\item #1}
         \renewcommand\question[1]{\item #1}

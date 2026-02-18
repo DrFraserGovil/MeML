@@ -71,6 +71,7 @@ Each line of text within a block then contains an arbitrary number of *markers*,
 | !      	| Action     	| A new task assigned to an individual. See `Action syntax' below.                               	|
 | ?      	| Query      	| An open question which needs to be resolved                                                    	|
 | >      	| Decision   	| A finalized decision or logistical change                                                      	|
+| $         | Summary       | A summary of the topic discussed, grouping together disparate thoughts                            |
 | +      	| Append     	| Appends the line of text to the previous marker, inserting a line break between them. Useful for multi-line list items, for example.           	|
 
 The Action, Query and Decision elements exhibit special behaviour when within a *Minutes* block. In addition to being including in the sequential list, they are aggregated at the top of the document in coloured boxes, allowing a high-level review of the meeting, distinct from the minutes.
