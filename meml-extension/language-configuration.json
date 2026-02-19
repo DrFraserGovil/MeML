@@ -1,38 +1,3 @@
 {
   "comments": { "lineComment": "%" },
-  "onEnterRules": [
-    { 
-      // CONTINUATION RULES: Only matches if there is actual TEXT after the marker
-      "beforeText": "^\\s*\\*\\s*\\S.*", 
-      "action": { "indentAction": "none", "appendText": "* ", "indent": "none" } 
-    },
-    { 
-      "beforeText": "^\\s*!\\s*\\S.*", 
-      "action": { "indentAction": "none", "appendText": "! ", "indent": "none" } 
-    },
-    { 
-      "beforeText": "^\\s*>\\s*\\S.*", 
-      "action": { "indentAction": "none", "appendText": "> ", "indent": "none" } 
-    },
-    { 
-      "beforeText": "^\\s*\\+\\s*\\S.*", 
-      "action": { "indentAction": "none", "appendText": "+ ", "indent": "none" } 
-    },
-    { 
-      "beforeText": "^\\s*#\\s*\\S.*", 
-      "action": { "indentAction": "none", "appendText": "* ", "indent": "indent" } 
-    },
-    { 
-      "beforeText": "^\\s*\\$\\s*\\S.*", 
-      "action": { "indentAction": "none", "appendText": "$ ", "indent": "none" } 
-    },
-    { 
-      "beforeText": "^\\s*\\?\\s*\\S.*", 
-      "action": { "indentAction": "none", "appendText": "? ", "indent": "none" } 
-    },
-    { 
-      "beforeText": "^([=\\-+\\*#]{2,})\\s*(.+?)\\s*[=\\-+\\*#]{2,}\\s*$",
-      "action": { "indentAction": "none", "appendText": "# ", "indent": "indent" } 
-    }
-  ]
 }

@@ -6,24 +6,55 @@ const outputChannel = vscode.window.createOutputChannel("MeML Build");
 let myStatusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
-    const smartEnter = vscode.commands.registerCommand('meml.smartEnter', async () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
-        const doc = editor.document;
-        const pos = editor.selection.active;
-        const line = doc.lineAt(pos.line).text;
-        const exitRegex = /^\s*[*!>+#$?]\s*$/;
+   const smartEnter = vscode.commands.registerCommand('meml.smartEnter', async () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) return;
+    
+    const doc = editor.document;
+    const pos = editor.selection.active;
+    const line = doc.lineAt(pos.line).text;
 
-        if (exitRegex.test(line)) {
-            await editor.edit((editBuilder) => {
-                const start = new vscode.Position(pos.line, line.search(/\S/));
-                const end = new vscode.Position(pos.line, line.length);
-                editBuilder.delete(new vscode.Range(start, end));
+    // 1. EXIT REGEX: Matches a line that is JUST a marker and whitespace
+    const exitRegex = /^\s*(\*+|[!>+#$?])\s*$/;
+
+    // 2. HEADER BLOCK REGEX: Matches == Title == or -- Title --
+    const headerBlockRegex = /^\s*([=\-+\*#]{2,})\s*(.+?)\s*\1\s*$/;
+
+    // 3. CONTINUATION REGEX: Matches any marker followed by content
+    const contRegex = /^(\s*)(\*+|[!>+#$?])\s+(.+)$/;
+
+    if (exitRegex.test(line)) {
+        // Exit case: Clear the empty marker and stay on this line
+        await editor.edit(editBuilder => {
+            const start = new vscode.Position(pos.line, line.search(/\S/));
+            const end = new vscode.Position(pos.line, line.length);
+            editBuilder.delete(new vscode.Range(start, end));
+        });
+        // We do NOT send a newline here, fulfilling the original smartEnter purpose
+    } 
+    else if (headerBlockRegex.test(line) || (line.trim().startsWith('#') && !headerBlockRegex.test(line))) {
+        // Handle transitions (Headers -> List) via direct edit
+        const indentMatch = line.match(/^(\s*)/);
+        const indent = indentMatch ? indentMatch[1] : "";
+        
+        await editor.edit(editBuilder => {
+            editBuilder.insert(pos, `\n${indent}* `);
+        });
+    }
+    else {
+        const match = line.match(contRegex);
+        if (match) {
+            const [_, whitespace, marker, content] = match;
+            // Direct edit for continuation to prevent double-indentation
+            await editor.edit(editBuilder => {
+                editBuilder.insert(pos, `\n${whitespace}${marker} `);
             });
         } else {
+            // Standard newline for everything else (non-lists, non-headers)
             await vscode.commands.executeCommand('type', { text: '\n' });
         }
-    });
+    }
+});
     context.subscriptions.push(smartEnter);
 
     // 1. Initialize Status Bar
