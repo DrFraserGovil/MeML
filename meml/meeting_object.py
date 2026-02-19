@@ -160,35 +160,26 @@ class Meeting:
         
 
         def group_summaries(summaries, default_topic):
-            # This regex looks for [Block Name] at the start of the string
-            # Group 1: The name inside the brackets
-            # Group 2: Any remaining text on that same line
             block_pattern = re.compile(r'^\s*\[([^\]]+)\](.*)', re.DOTALL)
             
             grouped_data = {}
             current_topic = default_topic
             
-            # Initialize the default block in our dictionary
             grouped_data[current_topic] = []
 
             for item in summaries:
                 match = block_pattern.match(item)
                 
                 if match:
-                    # We found a new block marker!
                     current_topic = match.group(1).strip()
                     content = match.group(2).strip()
                     
-                    # Ensure the new topic exists in our dictionary
                     if current_topic not in grouped_data:
                         grouped_data[current_topic] = []
                     
-                    # If there was text after the brackets (e.g., "[Topic] Actual info")
-                    # we add that text. If it was just "[Topic]", we skip the empty string.
                     if content:
                         grouped_data[current_topic].append(content)
                 else:
-                    # No new marker, so append this text to the current active topic
                     grouped_data[current_topic].append(item)
                     
             return grouped_data
@@ -212,12 +203,7 @@ class Meeting:
                 for key in q:
                     textList.setdefault(key,[]) 
                     textList[key] += q[key]
-        
-            # for r in 
-            # s += f"\n\\summaryBlock{{{topic}}}{{"
-            # if len(summaries) > 0:
-            #     s += ""
-            # # print(count)
+
 
         for t in textList:
             if len(textList[t]) > 0:

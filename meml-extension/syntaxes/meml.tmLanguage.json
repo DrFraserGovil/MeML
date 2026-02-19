@@ -2,7 +2,8 @@
   "scopeName": "text.meml",
   "patterns": [
     { "include": "#headers" },
-    { "include": "#markers" }
+    { "include": "#markers" },
+    { "include": "#itemisers"}
   ],
   "repository": {
   "headers": {
@@ -23,6 +24,18 @@
         { "name": "string.meml", "match": "^\\s*\\#\\s*.*$" },
         { "name": "comment.section.meml", "match": "^\\s*\\%\\s*.*$" }
       ]
+    },
+    "itemisers":{
+      "patterns": [
+    {
+      "name": "keyword.control.command.meml",
+      "match": "^\\s*(\\*+)\\s*(\\[(?i:ENUM|DESCRIPTION)\\])",
+      "captures": {
+        "1": { "name": "punctuation.definition.list.meml" },
+        "2": { "name": "entity.name.tag.meml" }
+      }
+    }
+  ]
     }
   }
 }

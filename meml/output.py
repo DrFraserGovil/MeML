@@ -79,6 +79,7 @@ def ToTex(meeting,mode,filename="test",output=None):
     elif mode== "chair":
         pre = "_chair"
     code = meeting.Members.ResolveNames(template.render(**render_vars))
+    # print(code)
     path = Path(filename)
     job_name = f"{path.stem}{pre}"
 

@@ -61,11 +61,13 @@ def LineWrapper(mode,type,level):
         if mode == "tex":
             wrap = ["\\summary{","}"]
     return wrap,delim,perwrap
-def BlockWrapper(mode,type):
+def BlockWrapper(mode,type,bullet):
     wrap = ["",""]
     delim = "\n"
     if type == "bullet" and mode == "tex":
-        wrap = ["\\begin{itemize}","\\end{itemize}"]
+        wrap = [f"\\begin{{{bullet}}}",f"\\end{{{bullet}}}"]
+
+
     return wrap,delim
 class Line:
     def __init__(self,rawline=None,cataglogue=[],lineNo=0):
@@ -78,6 +80,7 @@ class Line:
         self.Type = "text"
         self.Level = None
         self.Appended = []
+        self.IsFirstBullet = False
         isheader,title,level,symbol = detectHeader(rawline,cataglogue)
 
         if isheader:
@@ -100,7 +103,21 @@ class Line:
                 self.Level = 0
                 self.Text = rawline
 
-      
+    def GetBulletType(self):
+        self.IsFirstBullet = True
+        regex = r"\[([^\]]+)\](.*)$"
+        match = re.match(regex, self.Text)
+        code = match.group(1).lower() if match else None
+        if code in ["enum","describe"]:
+            self.Text = match.group(2)
+            self.BulletCode = code.upper()
+            if code == "enum":
+                return "enumerate"
+            else:
+                return "description"
+        else:
+            self.BulletCode = None
+            return "itemize"
     def absorb(self,line,delimiter=" "):
         if self.Blank:
             self.Text = line.Text
@@ -125,8 +142,9 @@ class Line:
     def GetText(self,mode,type=None):
         if self.Blank or (type is not None and self.Type != type):
             return ""
-        
         wrap,delimiter,perwrap = LineWrapper(mode,self.Type,self.Level)
+        if self.IsFirstBullet and self.BulletCode and mode == "mtg":
+            wrap[0] = wrap[0] + f"[{self.BulletCode}]"
 
         s = wrap[0] + delimiter.join([perwrap[0] + r + perwrap[1] for r in [self.Text] + self.Appended]) + wrap[1]
         return s
@@ -147,6 +165,8 @@ class Block:
                 return True
             self.IsBlank = False
             self.Type = line.Type
+            if self.Type == "bullet":
+                self.BulletType = line.GetBulletType()
             self.Level = line.Level
             self.Elements = [line]
             return True
@@ -165,23 +185,27 @@ class Block:
         if self.Level > line.Level:
             return False
         else:
-            if self.Elements[-1].Level == line.Level:
+            if self.Elements[-1].Level == line.Level or isinstance(self.Elements[-1],Block):
                 self.Elements[-1].Feed(line)
             else:
-                if line.Level != self.Level + 1:
-                    print(f"Non-continous level change detected in line {line.Number}")
-                    print("Nesting level will be automatically corrected")
-                    line.Level = self.Level + 1
-                self.Elements.append(Block(line))
+                # reach here if level differential, and block does not have inner blocks
+
+                    if line.Level != self.Elements[-1].Level + 1:
+                        print(f"Non-continous level change detected in line {line.Number}")
+                        print("Nesting level will be automatically corrected")
+                    #     line.Level = self.Level + 1
+                    self.Elements.append(Block(line))
             return True
     def GetText(self,mode,type=None):
-        wrap,delim = BlockWrapper(mode,self.Type)
-        s = wrap[0]
+        # print("Getting text for block",self.Level,mode)
+        wrap,delim = BlockWrapper(mode,self.Type,self.BulletType)
+        s = wrap[0] + (f"% level {self.Level}\n" if mode=="tex" else "")
         for el in self.Elements:
             s += el.GetText(mode,type)
             if len(s) > 0 and s[-1] != delim:
                 s += delim
-        s += wrap[1]
+        s += wrap[1]  + (f"% level {self.Level}\n" if mode=="tex" else "")
+        # print("Finished block",self.Level,mode)
         return s
 
 class Section:
