@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { exec } from 'child_process';
 
+const outputChannel = vscode.window.createOutputChannel("MeML Build");
 let myStatusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
-    // --- Existing Smart Enter Command ---
     const smartEnter = vscode.commands.registerCommand('meml.smartEnter', async () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
@@ -71,15 +72,58 @@ export function activate(context: vscode.ExtensionContext) {
         const suffix = mode === 'minutes' ? 'minutes' : mode;
         const pdfPath = path.join(outDir, `${fileNameNoExt}_${suffix}.pdf`);
 
-        const cmd = `mkdir -p "${outDir}"; memlmake "${filePath}" ${flags[mode]} -o "${outDir}/" && open "${pdfPath}"`;
+        outputChannel.clear();
+        outputChannel.appendLine(`[${new Date().toLocaleTimeString()}] Starting MeML build in ${mode} mode...`);
+        // outputChannel.show(true); // Show the panel but don't steal focus
 
-        let terminal = vscode.window.terminals.find(t => t.name === 'MeML Build');
-        if (!terminal) terminal = vscode.window.createTerminal('MeML Build');
-        terminal.show();
-        terminal.sendText(cmd);
+        const fullCmd = `mkdir -p "${outDir}"; memlmake "${filePath}" ${flags[mode]} -o "${outDir}/"`;
+
+// Use /bin/bash explicitly to avoid shell-specific quirks
+const shellCmd = `bash -c '${fullCmd}'`;
+
+const process = exec(shellCmd);
+
+process.stdout?.on('data', (data) => {
+    outputChannel.append(data.toString());
+});
+
+process.stderr?.on('data', (data) => {
+    // Some compilers send warnings to stderr; we'll log them as-is
+    outputChannel.append(data.toString());
+});
+
+process.on('close', async (code) => {
+    if (code === 0) {
+        outputChannel.appendLine(`\n[SUCCESS] Build finished.`);
+        vscode.window.setStatusBarMessage(`MeML: Build Successful`, 4000);
+
+        const pdfUri = vscode.Uri.file(pdfPath);
+        await vscode.commands.executeCommand('vscode.open', pdfUri, {
+            viewColumn: vscode.ViewColumn.Beside,
+            preserveFocus: true
+        });
+    } else {
+        outputChannel.appendLine(`\n[FAILED] Build exited with code ${code}.`);
+        vscode.window.showErrorMessage("MeML build failed. Check Output tab.");
+        outputChannel.show(); // Bring to front so you can see the error
+    }
+});
     });
 
     context.subscriptions.push(selectMode, buildDoc);
+
+    context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument((document) => {
+        if (document.languageId === 'meml') {
+            const config = vscode.workspace.getConfiguration('meml');
+            const buildOnSave = config.get<boolean>('buildOnSave');
+
+            if (buildOnSave) {
+                vscode.commands.executeCommand('meml.build');
+            }
+        }
+    })
+);
 }
 
 export function deactivate() {}

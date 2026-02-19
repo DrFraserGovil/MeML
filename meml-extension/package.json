@@ -36,56 +36,82 @@
         "path": "./syntaxes/meml.tmLanguage.json"
       }
     ],
-    "keybindings": [
-      {
-        "command": "meml.smartEnter",
-        "key": "enter",
-        "when": "editorTextFocus && editorLangId == 'meml'"
-      },
-      {
-      "command": "meml.selectMode",
-      "key": "ctrl+shift+m",
-      "when": "editorLangId == meml"
-    },
-      {
-      "command": "meml.build",
-      "key": "ctrl+shift+b",
-      "when": "editorLangId == meml"
-    }
-    ],
     "commands": [
       {
         "command": "meml.smartEnter",
         "title": "MeML: Smart Enter"
       },
-      { "command": "meml.build", "title": "MeML: Build PDF", "icon": "$(play)" },
-    { "command": "meml.setModeAgenda", "title": "Switch to Agenda Mode" },
-    { "command": "meml.setModeChair", "title": "Switch to Chair Mode" },
-    { "command": "meml.setModeMinutes", "title": "Switch to Minutes Mode" }
+      {
+        "command": "meml.build",
+        "title": "MeML: Build PDF",
+        "icon": "$(play)"
+      },
+      {
+        "command": "meml.selectMode",
+        "title": "MeML: Change Mode",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "meml.setModeAgenda",
+        "title": "Switch to Agenda Mode"
+      },
+      {
+        "command": "meml.setModeChair",
+        "title": "Switch to Chair Mode"
+      },
+      {
+        "command": "meml.setModeMinutes",
+        "title": "Switch to Minutes Mode"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "meml.smartEnter",
+        "key": "enter",
+        "when": "editorTextFocus && editorLangId == 'meml' && !suggestWidgetVisible"
+      },
+      {
+        "command": "meml.selectMode",
+        "key": "ctrl+shift+m",
+        "when": "editorLangId == meml"
+      },
+      {
+        "command": "meml.build",
+        "key": "ctrl+shift+b",
+        "when": "editorLangId == meml"
+      }
     ],
     "menus": {
-    "editor/title": [
-      {
-        "when": "resourceLangId == meml",
-        "command": "meml.build",
-        "group": "navigation"
-      }
-    
-    ]
-  },
+      "editor/title": [
+        {
+          "when": "resourceLangId == meml",
+          "command": "meml.build",
+          "group": "navigation@1"
+        },
+        {
+          "when": "resourceLangId == meml",
+          "command": "meml.selectMode",
+          "group": "navigation@2"
+        }
+      ]
+    },
     "configuration": {
-  "title": "MeML",
-  "properties": {
-    "meml.outputPath": {
-      "type": "string",
-      "default": "compiled_pdfs",
-      "description": "Where to save compiled PDFs. Can be an absolute path or relative to the .meml file."
+      "title": "MeML",
+      "properties": {
+        "meml.outputPath": {
+          "type": "string",
+          "default": "compiled_pdfs",
+          "description": "Where to save compiled PDFs. Can be an absolute path or relative to the .meml file."
+        },
+        "meml.buildOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically build the PDF whenever a MeML file is saved."
+        }
+      }
     }
-  }
-}
   },
   "dependencies": {
-    "path": "^0.12.7",
     "typescript": "^5.9.3"
   },
   "devDependencies": {

@@ -20,7 +20,8 @@
         { "name": "string.regexp.action.meml", "match": "^\\s*!\\s*.*$" },
         { "name": "markup.bold.summary.meml", "match": "^\\s*\\$\\s*.*$" },
         { "name": "entity.name.function.append.meml", "match": "^\\s*\\+\\s*.*$" },
-        { "name": "comment.section.meml", "match": "^\\s*\\#\\s*.*$" }
+        { "name": "string.meml", "match": "^\\s*\\#\\s*.*$" },
+        { "name": "comment.section.meml", "match": "^\\s*\\%\\s*.*$" }
       ]
     }
   }

@@ -146,3 +146,8 @@ We also provide a VSCode plugin, in the `meml-extension` directory. This can be 
 
 The extension provides syntax highlighting for the various marker lines, and a `Smart Enter' feature which automatially inserts the previous marker to enable quick note-taking (type enter again to clear the line).
 
+### Build System
+The VSCode plugin also provides a build system, allowing access to `memlmake` from within VSCode. The plugin has the following properties:
+1. Binds Ctrl+Shift+B to memlmake on the current document, when a meml file is detected
+2. Binds Ctrl+Shift+M to the 'mode' menu, allowing a user to choose which mode the compiler uses
+3. Has a  
